@@ -126,8 +126,7 @@ router.post('/products', async (req, res) => {
       `INSERT INTO products
          (category_id, name, description, brand, price, original_price, stock_qty, image_url, is_featured)
        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [category_id, name, description || null, brand || null, price, original_price || null, stock_qty, image_url, is_featured ? 1 : 0]
-    );
+[category_id, name, description || null, brand || null, price, original_price || null, stock_qty, image_url, !!is_featured]    );
     const [[row]] = await pool.query(`
       SELECT p.*, c.name AS category_name, c.slug AS category_slug
       FROM products p JOIN categories c ON c.id = p.category_id WHERE p.id = ?`, [result.insertId]);

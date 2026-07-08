@@ -30,9 +30,9 @@ router.get('/products', async (req, res) => {
     const where = [];
     const params = [];
 
-    if (featured === '1') {
-      where.push('p.is_featured = 1');
-    }
+if (featured === '1') {
+  where.push('p.is_featured = true');
+}
     if (category) {
       where.push('c.slug = ?');
       params.push(category);

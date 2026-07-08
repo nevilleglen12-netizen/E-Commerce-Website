@@ -56,9 +56,7 @@ for (const c of categories) {
         `INSERT INTO products
           (category_id, name, description, brand, price, original_price, stock_qty, image_url, rating, reviews_count, is_featured)
          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-        [categoryId, p.name, p.description, p.brand, p.price, p.original_price, p.stock_qty, p.image_url, p.rating, p.reviews_count, p.is_featured]
-      );
-    }
+[categoryId, p.name, p.description, p.brand, p.price, p.original_price, p.stock_qty, p.image_url, p.rating, p.reviews_count, !!p.is_featured]    }
 
     console.log('Seed complete ✔');
   } finally {
