@@ -1,9 +1,8 @@
 {
   "name": "shopease-api",
   "version": "1.0.0",
-  "description": "ShopEase Express + MySQL API",
+  "description": "ShopEase Express + Postgresql API",
   "main": "index.js",
-  "type":"module",
   "scripts": {
     "start": "node index.js",
     "dev": "nodemon index.js",
@@ -15,7 +14,7 @@
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
     "express-session": "^1.18.0",
-    "mysql2": "^3.10.0"
+    "pg": "^8.22.0"
   },
   "devDependencies": {
     "nodemon": "^3.1.4"

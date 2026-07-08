@@ -61,11 +61,12 @@ router.post('/', requireAuth, async (req, res) => {
     const orderNumber = generateOrderNumber();
 
     const [orderResult] = await conn.query(
-      `INSERT INTO orders
-        (order_number, customer_id, status, payment_method, shipping_address, shipping_city, notes, subtotal, shipping_fee, total)
-       VALUES (?, ?, 'pending', ?, ?, ?, ?, ?, ?, ?)`,
-      [orderNumber, req.session.customerId, payment_method || 'cash_on_delivery', shipping_address, shipping_city, notes || null, subtotal, shippingFee, total]
-    );
+       `INSERT INTO orders
+         (order_number, customer_id, status, payment_method, shipping_address, shipping_city, notes, subtotal, shipping_fee, total)
+       VALUES (?, ?, 'pending', ?, ?, ?, ?, ?, ?, ?)
+        RETURNING id`,
+       [orderNumber, req.session.customerId, payment_method || 'cash_on_delivery', shipping_address, shipping_city, notes || null, subtotal, shippingFee, total]
+     );
 
     for (const oi of orderItems) {
       await conn.query(

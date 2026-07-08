@@ -1,7 +1,7 @@
 // Seeds the shopease database with categories and a starter product catalog.
 // Run with: npm run seed   (after schema.sql has been applied)
 require('dotenv').config();
-const pool = require('./pool');
+const pool = require('./db');
 
 const categories = [
   { name: 'Electronics',        slug: 'electronics',   icon: '📱' },
@@ -38,18 +38,17 @@ async function seed() {
   try {
     console.log('Seeding categories…');
     const slugToId = {};
-    for (const c of categories) {
-      const [{ id }] = await conn.query(
-        `INSERT INTO categories (name, slug, icon)
-         VALUES (?, ?, ?)
-         ON CONFLICT (slug) DO UPDATE
-         SET name = EXCLUDED.name, icon = EXCLUDED.icon
-         RETURNING id`,
-        [c.name, c.slug, c.icon]
-      );
-      slugToId[c.slug] = id;
-    }
-
+for (const c of categories) {
+ const [result] = await conn.query(
+         `INSERT INTO categories (name, slug, icon)
+          VALUES (?, ?, ?)
+          ON CONFLICT (slug) DO UPDATE
+          SET name = EXCLUDED.name, icon = EXCLUDED.icon
+          RETURNING id`,
+         [c.name, c.slug, c.icon]
+       );
+ slugToId[c.slug] = result.rows[0].id;
+     }
     console.log('Seeding products…');
     for (const p of products) {
       const categoryId = slugToId[p.slug];

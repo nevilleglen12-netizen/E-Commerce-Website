@@ -1037,16 +1037,20 @@ async function fetchCategories() {
     if (!data.success) return;
     allCategories = data.categories;
  
-    // Populate stock filter
+
     const catFilter = document.getElementById('stock-cat-filter');
-    catFilter.innerHTML = '<option value="">All categories</option>' +
-      allCategories.map(c => `<option value="${esc(c.slug)}">${esc(c.name)}</option>`).join('');
- 
+    populateSelectSafely(catFilter, '<option value="">All categories</option>' +
+      allCategories.map(c => `<option value="${esc(c.slug)}">${esc(c.name)}</option>`).join(''));
     // Populate add-product category select
     const pCat = document.getElementById('p-category');
-    pCat.innerHTML = '<option value="">Select category</option>';
-    // We need IDs, so fetch with ID
-    const res2 = await fetch(`${API}/admin/products`);
+    let pCatHtml = '<option value="">Select category</option>';
+     allProducts.forEach(p => {
+       if (!seen.has(p.category_id)) {
+         seen.add(p.category_id);
+        pCatHtml += `<option value="${p.category_id}">${esc(p.category_name)}</option>`;
+       }
+     });
+    populateSelectSafely(pCat, pCatHtml);
     // We'll get categories from products data
   } catch(e) { console.error('Categories fetch error:', e); }
 }
@@ -1196,6 +1200,7 @@ function closeAddProduct() {
 document.getElementById('drawer-overlay').addEventListener('click', function(e) {
   if (e.target === this) closeAddProduct();
 });
+
  
 async function submitAddProduct() {
   const name          = document.getElementById('p-name').value.trim();
@@ -1275,6 +1280,17 @@ function formatTime(str) {
   const date = d.toLocaleDateString('en-KE', { day:'2-digit', month:'short', year:'numeric' });
   const time = d.toLocaleTimeString('en-KE', { hour:'2-digit', minute:'2-digit' });
   return `${date}\n${time}`;
+
+}
+function populateSelectSafely(selectEl, optionsHtml) {
+  if (document.activeElement === selectEl) return; // user is interacting — skip this cycle
+  if (selectEl.dataset.optionsHash === optionsHtml) return; // nothing changed
+  const currentValue = selectEl.value;
+  selectEl.innerHTML = optionsHtml;
+  selectEl.dataset.optionsHash = optionsHtml;
+  if ([...selectEl.options].some(o => o.value === currentValue)) {
+    selectEl.value = currentValue;
+  }
 }
 </script>
  
